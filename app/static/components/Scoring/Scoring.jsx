@@ -32,7 +32,7 @@ class Scoring extends React.Component {
         <hr className="special-border" />
         <div id="alert"></div>
         <div className="form-group">
-          <label className="control-label" for="focusedInput">Online deployment of “GoodsCategoryPrediction” model</label>
+          <label className="control-label" for="focusedInput">Online deployment of <i>{this.context.modelName}</i> model</label>
           <div id="modelCntn"></div>
         </div>
         <div className="form-group">
@@ -54,5 +54,9 @@ class Scoring extends React.Component {
     );
   }
 }
+
+Scoring.contextTypes = {
+  modelName: React.PropTypes.string
+};
 
 module.exports = Scoring;

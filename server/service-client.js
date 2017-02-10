@@ -62,6 +62,10 @@ const ServiceClient = module.exports = function (service) {
 
 ServiceClient.prototype = {
 
+  isAvailable: function () {
+    return (this.credentials != null);
+  },
+
   performRequest: function (options, callback) {
     getTokenFromTokenEndoint(
       this.credentials.url,
@@ -138,39 +142,83 @@ ServiceClient.prototype = {
     });
   },
 
+  _getModels: function (callback) {
+    logger.enter('getModels()');
+    let options = {
+      method: 'GET',
+      uri: '/v2/artifacts/models'
+    };
+
+    this.performRequest(options, function (error, response, body) {
+      if (!error && response.statusCode === 200) {
+        let models = JSON.parse(body).resources;
+        debug('all models', models);
+        models = models
+          .filter(model => {
+            let {name} = model.entity;
+            return name === config('model-name');
+          })
+          .map(model => model.metadata.guid);
+        debug(`guids of ${config('model-name')} models`, models);
+        return callback(null, models);
+      } else if (error) {
+        logger.error('getModels()', error);
+        return callback(error.message);
+      } else {
+        error = new Error('Service error code: ' + response.statusCode);
+        logger.error('getModels()', error);
+        return callback(error.message);
+      }
+    });
+  },
+
   getDeployments: function (callback) {
     logger.enter('getDeployments()');
+
     let options = {
       method: 'GET',
       uri: '/v2/online/deployments'
     };
 
-    this.performRequest(options, function (error, response, body) {
-      if (!error && response.statusCode === 200) {
-        let deployments = JSON.parse(body);
-        deployments = deployments && deployments.resources;
-        debug('all deployments', deployments);
-        deployments = deployments.filter((item) => {
-          let artifact = item.entity && item.entity.artifact;
-          return artifact.name === config('model-name');
-        }).map((item) => {
-          let result = item.entity;
-          result.modelSchema = config('model-schema');
-          result.sampleInput = config('model-sample-input');
-          result.predictionMapping = config('model-prediction-mapping');
-          result.id = item.metadata.guid;
-          return result;
-        });
-        debug('matching & prepared online deployments: ', deployments);
-        return callback(null, deployments);
-      } else if (error) {
-        logger.error('getDeployments()', error);
-        return callback(error.message);
+    this._getModels((error, result) => {
+      if (error) {
+        return callback(error);
       } else {
-        error = new Error('Service error code: ' + response.statusCode);
-        logger.error('getDeployments()', error);
-        return callback(error.message);
-      }
-    });
+        let expectedModelGuids = result;
+
+        this.performRequest(options, (error, response, body) => {
+          if (!error && response.statusCode === 200) {
+            let deployments = JSON.parse(body);
+            deployments = deployments && deployments.resources;
+            debug('all deployments', deployments);
+            let re = new RegExp('/v2/artifacts/models/([^/]+)/versions');
+            deployments = deployments
+              .filter(item => {
+                let deplModelHref = item.entity.artifactVersion.href;
+                return expectedModelGuids.some(emg => {
+                  let [, modelGuid] = deplModelHref.match(re);
+                  return emg === modelGuid;
+                });
+              })
+              .map((item) => {
+                let result = item.entity;
+                result.modelSchema = config('model-schema');
+                result.sampleInput = config('model-sample-input');
+                result.predictionMapping = config('model-prediction-mapping');
+                result.id = item.metadata.guid;
+                return result;
+              });
+            debug('matching & prepared online deployments: ', deployments);
+            return callback(null, deployments);
+          } else if (error) {
+            logger.error('getDeployments()', error);
+            return callback(error.message);
+          } else {
+            error = new Error('Service error code: ' + response.statusCode);
+            logger.error('getDeployments()', error);
+            return callback(error.message);
+          }
+        });
+      }});
   }
 };

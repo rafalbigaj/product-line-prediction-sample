@@ -36,7 +36,7 @@ class Overview extends React.Component {
         <br/>
         <p>Within sample scoring application you are able to:</p>
         <ul>
-          <li>select one of online deployments (scoring) based on GoodsCategoryPrediction sample model</li>
+          <li>select one of online deployments (scoring) based on <i>{this.context.modelName}</i> sample model</li>
           <li>using the Input data drop box you can easily either drag and drop csv file with input data for scoring (or double click on input data field to open file browser)</li>
           <li>call IBM Watson Machine Learning REST API using „Get Score” button</li>
           <li>display scoring result in form of a table</li>
@@ -47,5 +47,9 @@ class Overview extends React.Component {
     );
   }
 }
+
+Overview.contextTypes = {
+  modelName: React.PropTypes.string
+};
 
 module.exports = Overview;

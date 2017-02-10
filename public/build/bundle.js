@@ -11913,7 +11913,14 @@
 	        loadingVisible: false
 	      });
 	    }.bind(this)).fail(function (jqXHR, textStatus, errorThrown) {
-	      _showError(jqXHR.responseJSON ? jqXHR.responseJSON.errors : errorThrown);
+	      var err = errorThrown;
+	      if (jqXHR.responseJSON) {
+	        err = jqXHR.responseJSON.errors;
+	      } else if (jqXHR.responseText) {
+	        err = jqXHR.responseText;
+	      }
+	      _showError(err);
+	
 	      mainLoader.setState({
 	        loadingVisible: false
 	      });
@@ -32448,6 +32455,11 @@
 	  }
 	
 	  _createClass(App, [{
+	    key: 'getChildContext',
+	    value: function getChildContext() {
+	      return { modelName: "Product Line Prediction" };
+	    }
+	  }, {
 	    key: 'render',
 	    value: function render() {
 	      return _react2.default.createElement(
@@ -32476,6 +32488,10 @@
 	
 	  return App;
 	}(_react2.default.Component);
+	
+	App.childContextTypes = {
+	  modelName: _react2.default.PropTypes.string
+	};
 	
 	module.exports = App;
 
@@ -32746,7 +32762,13 @@
 	          _react2.default.createElement(
 	            'label',
 	            { className: 'control-label', 'for': 'focusedInput' },
-	            'Online deployment of \u201CGoodsCategoryPrediction\u201D model'
+	            'Online deployment of ',
+	            _react2.default.createElement(
+	              'i',
+	              null,
+	              this.context.modelName
+	            ),
+	            ' model'
 	          ),
 	          _react2.default.createElement('div', { id: 'modelCntn' })
 	        ),
@@ -32797,6 +32819,10 @@
 	
 	  return Scoring;
 	}(_react2.default.Component);
+	
+	Scoring.contextTypes = {
+	  modelName: _react2.default.PropTypes.string
+	};
 	
 	module.exports = Scoring;
 
@@ -32913,7 +32939,13 @@
 	          _react2.default.createElement(
 	            'li',
 	            null,
-	            'select one of online deployments (scoring) based on GoodsCategoryPrediction sample model'
+	            'select one of online deployments (scoring) based on ',
+	            _react2.default.createElement(
+	              'i',
+	              null,
+	              this.context.modelName
+	            ),
+	            ' sample model'
 	          ),
 	          _react2.default.createElement(
 	            'li',
@@ -32943,6 +32975,10 @@
 	
 	  return Overview;
 	}(_react2.default.Component);
+	
+	Overview.contextTypes = {
+	  modelName: _react2.default.PropTypes.string
+	};
 	
 	module.exports = Overview;
 

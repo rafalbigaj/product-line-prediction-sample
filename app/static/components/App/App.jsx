@@ -20,6 +20,10 @@ import ReactDOM from 'react-dom';
 import Header from '../Header'
 
 class App extends React.Component {
+  getChildContext() {
+    return {modelName: "Product Line Prediction"};
+  }
+
   render () {
     return (
       <div>
@@ -38,5 +42,9 @@ class App extends React.Component {
     );
   }
 }
+
+App.childContextTypes = {
+  modelName: React.PropTypes.string
+};
 
 module.exports = App;

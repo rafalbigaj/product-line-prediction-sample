@@ -1,5 +1,5 @@
 {
-  "model-name": "GoodsCategoryPrediction",
+  "model-name": "Product Line Prediction",
   "model-schema": [
     {"id": "GENDER", "name": "Gender", "type": "STRING"},
     {"id": "AGE", "name": "Age", "type": "INTEGER"},

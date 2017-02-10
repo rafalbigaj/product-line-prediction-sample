@@ -81,7 +81,14 @@ var ModelContainer = React.createClass({
     }
     .bind(this))
     .fail(function (jqXHR, textStatus, errorThrown) {
-      _showError(jqXHR.responseJSON ? jqXHR.responseJSON.errors : errorThrown);
+      let err = errorThrown;
+      if (jqXHR.responseJSON) {
+        err = jqXHR.responseJSON.errors;
+      } else if (jqXHR.responseText) {
+        err = jqXHR.responseText;
+      }
+      _showError(err);
+
       mainLoader.setState({
         loadingVisible: false
       });
