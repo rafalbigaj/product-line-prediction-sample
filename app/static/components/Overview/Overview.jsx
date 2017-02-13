@@ -30,16 +30,16 @@ class Overview extends React.Component {
       <div>
         <h3>Documentation</h3>
         <hr />
-        Github link: <a href="https://github.com/pmservice/product-line-prediction" target="_blank">https://github.com/pmservice/product-line-prediction</a>
+        GitHub link: <a href="https://github.com/pmservice/product-line-prediction" target="_blank">https://github.com/pmservice/product-line-prediction</a>
         <hr />
-        <h4>This sample application shows how to easily score data using IBM Watson Machine Learning online deployment.</h4>
+        <h4>This sample application shows you how to easily score data using an IBM Watson Machine Learning online deployment.</h4>
         <br/>
-        <p>Within sample scoring application you are able to:</p>
+        <p>With this sample scoring application, you can:</p>
         <ul>
-          <li>select one of online deployments (scoring) based on <i>{this.context.modelName}</i> sample model</li>
-          <li>using the Input data drop box you can easily either drag and drop csv file with input data for scoring (or double click on input data field to open file browser)</li>
-          <li>call IBM Watson Machine Learning REST API using „Get Score” button</li>
-          <li>display scoring result in form of a table</li>
+          <li>Select an online deployment based on a <i>{this.context.modelName}</i> sample model</li>
+          <li>Use the Input data field to easily drag-and-drop a CSV file that contains input data for scoring (or double-click the field to open a file browser)</li>
+          <li>Click the <b>Get Score</b> button to call the Machine Learning REST API</li>
+          <li>Display scoring results in the form of a table</li>
           <br/>
             <a href="images/scoring_result.png"><img src="images/scoring_result.png" alt="Scoring screen" width="100%" /></a>
         </ul>

@@ -25,8 +25,8 @@ envRouter.get('/deployments', function (req, res) {
   var pmEnv = req.app.get('pm service env');
   var pmClient = new PMClient(pmEnv);
   if (!pmClient.isAvailable()) {
-    let err = `To use this sample application you need to bind it with the instance of IBM Watson
-      Machine Learning service and use proper model from this service.`;
+    let err = `To use this sample application, you must bind it with the instance of the
+      IBM Watson Machine Learning service and use the proper model from this service.`;
     res.status(404).send(err);
   } else {
     pmClient.getDeployments(function (err, result) {
