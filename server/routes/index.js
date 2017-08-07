@@ -28,13 +28,17 @@ envRouter.get('/deployments', function (req, res) {
       IBM Watson Machine Learning service and use the proper model from this service.`;
     res.status(404).send(err);
   } else {
-    pmClient.getDeployments(function (err, result) {
-      if (err) {
-        res.status(500).json({errors: err});
-      } else {
-        res.json(result);
-      }
-    });
+    try {
+       pmClient.getDeployments(function (err, result) {
+         if (err) {
+           res.status(500).json({errors: err});
+         } else {
+           res.json(result);
+         }
+       });
+    } catch(exception) {
+       res.status(500).json({errors: exception.message});
+    }
   }
 });
 
