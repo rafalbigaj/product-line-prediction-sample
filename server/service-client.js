@@ -26,7 +26,7 @@ const modelInfo = require('../config/model.json');
 var schema = modelInfo['model-schema'].map(obj => obj.name)
 
 function getTokenFromTokenEndoint(tokenEndpoint, user, password) {
-  debug('getTokenFromTokenEndoint', tokenEndpoint);
+  logger.debug('getTokenFromTokenEndoint', tokenEndpoint);
   return new Promise((resolve, reject) => {
     request.get(tokenEndpoint + TOKEN_PATH, {
       strictSSL: false,
@@ -38,7 +38,7 @@ function getTokenFromTokenEndoint(tokenEndpoint, user, password) {
       if (err) {
         reject(err);
       }
-      debug('got response:', body);
+      logger.debug('got response:', body);
       if (!res || !res.statusCode) {
         reject(new Error('Token Endpoint failure'));
       } else {
@@ -76,7 +76,7 @@ ServiceClient.prototype = {
     .then((token) => {
       options.headers = {Authorization: 'Bearer ' + token};
       options.uri = options.uri.startsWith('http') ? options.uri : this.credentials.url + options.uri;
-      debug(`url: ${options.uri}`);
+      logger.debug(`url: ${options.uri}`);
       request(options, callback);
     })
     .catch((err) => {
@@ -92,7 +92,7 @@ ServiceClient.prototype = {
       headers: {'content-type': 'application/json'}
     };
     let body = JSON.stringify({values: [data], fields: schema});
-    debug(body);
+    logger.debug(body);
     options.body = body;
 
     this.performRequest(options, function (error, response, body) {
@@ -119,7 +119,7 @@ ServiceClient.prototype = {
           }
         }
         logger.error(`getScore() error during scoring for scoringHref: ${href}, msg: ${error}`);
-        debug(error, 'body: ', response.body);
+        logger.debug(error, 'body: ', response.body);
         callback && callback(error);
       }
     });
@@ -135,7 +135,7 @@ ServiceClient.prototype = {
     this.performRequest(options, function (error, response, body) {
       if (!error && response.statusCode === 200) {
         let models = JSON.parse(body).resources;
-        debug('all models', models);
+        logger.debug('all models', models);
         return callback(null, models);
       } else if (error) {
         logger.error('getModels()', error);
@@ -159,7 +159,7 @@ ServiceClient.prototype = {
     this.performRequest(options, function (error, response, body) {
       if (!error && response.statusCode === 200) {
         let models = JSON.parse(body);
-        debug('instance details', models);
+        logger.debug('instance details', models);
         return callback(null, models);
       } else if (error) {
         logger.error('getInstanceDetails()', error);
@@ -200,15 +200,15 @@ ServiceClient.prototype = {
 
                 let deployments = JSON.parse(body);
                 deployments = deployments && deployments.resources;
-                debug('all deployments', deployments);
+                logger.debug('all deployments', deployments);
                 deployments = deployments
                   .map((item) => {
                     let {entity} = item;
                     let {metadata} = item;
                     let dmHref = entity.deployed_version.url;
-                    debug('deployed version', dmHref);
+                    logger.debug('deployed version', dmHref);
                     let dmGuid = entity.published_model.guid;
-                    debug("dmGuid", dmGuid)
+                    logger.debug("dmGuid", dmGuid)
                     let model = deployments_parsed.resources.find(m => m.metadata.guid === dmGuid);
                     if (model != null) {
                       model = model.entity;
@@ -232,7 +232,7 @@ ServiceClient.prototype = {
                     };
                     return result;
                   });
-                debug('matching & prepared online deployments: ', deployments);
+                logger.debug('matching & prepared online deployments: ', deployments);
                 return callback(null, deployments);
               }
             }
